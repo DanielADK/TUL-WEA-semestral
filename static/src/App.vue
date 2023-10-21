@@ -1,8 +1,10 @@
 <template>
   <Navigation/>
-  <AlertList :alerts="alerts" @remove-alert="removeAlert"/>
+  <main class="container">
+    <AlertList :alerts="alerts" @remove-alert="removeAlert"/>
 
-  <router-view/>
+    <router-view/>
+  </main>
 </template>
 
 <script setup>
