@@ -1,0 +1,26 @@
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{"username": "d", "password": "a"}
+
+> {%
+    client.test("Invalid login", () => {
+        client.assert(response.status === 401, "Response status is 401");
+        client.assert(response.body.message === "Invalid credentials", "Message is 'Invalid credentials'");
+        client.assert(!response.body.success);
+    });
+  %}
+###
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{"username": "daniel", "password": "adamek"}
+
+> {%
+    client.test("Success login", () => {
+        client.assert(response.status === 200, "Response status is 200");
+        client.log(response.body.token)
+        client.assert(response.body.token, "Message is contains token");
+    });
+%}
+###
