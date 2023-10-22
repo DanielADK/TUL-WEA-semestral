@@ -19,9 +19,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import axios from "axios";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   data() {
@@ -30,8 +30,11 @@ export default {
       password: ''
     }
   },
+  computed: {
+    ...mapGetters(["isAuthenticated"]),
+  },
   methods: {
-    ...mapActions(["addAlert"]),
+    ...mapActions(["addAlert", "login"]),
     loginAlert() {
       this.addAlert({
         message: "You have been logged in!",
@@ -52,8 +55,8 @@ export default {
         });
 
         if (response.data.success) {
-          // Save token to localstorage
-          localStorage.setItem("token", response.data.token);
+          // Save token to Vuex store
+          await this.login(response.data.token);
 
           // Login alert
           this.loginAlert();
