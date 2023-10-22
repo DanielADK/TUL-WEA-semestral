@@ -10,7 +10,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import HelloWorld from './components/Home.vue'
-import LoginScreen from "@/components/LoginScreen.vue"
+import LoginScreen from "@/components/Login.vue"
 import Navigation from "@/components/Navigation.vue";
 import AlertList from "@/components/AlertList.vue";
 
