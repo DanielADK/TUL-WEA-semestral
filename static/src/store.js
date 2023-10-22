@@ -11,7 +11,7 @@ export default createStore({
             state.alerts.push(alert);
             setTimeout(() => {
                 state.alerts.shift();
-            }, 5000);
+            }, 3000);
         },
         AUTH_SUCCESS(state, token) {
             state.status = "success";
