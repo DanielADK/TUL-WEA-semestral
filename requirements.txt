@@ -1,2 +1,5 @@
 flask~=3.0.0
+Flask-Cors~=4.0.0
+Flask-HTTPAuth~=4.8.0
+SQLAlchemy~=2.0.22
 PyJWT~=2.8.0
