@@ -2,7 +2,9 @@ import { createStore } from "vuex";
 
 export default createStore({
     state: {
-        alerts: []
+        alerts: [],
+        token: localStorage.getItem("token") || "",
+        status: ""
     },
     mutations: {
         ADD_ALERT(state, alert) {
@@ -10,11 +12,31 @@ export default createStore({
             setTimeout(() => {
                 state.alerts.shift();
             }, 5000);
+        },
+        AUTH_SUCCESS(state, token) {
+            state.status = "success";
+            state.token = token;
+        },
+        LOGOUT(state) {
+            state.status = "";
+            state.token = "";
         }
     },
     actions: {
         addAlert({ commit }, alert) {
             commit("ADD_ALERT", alert);
+        },
+        login({ commit }, payload) {
+            localStorage.setItem("token", payload.token);
+            commit("AUTH_SUCCESS", payload.token);
+        },
+        logout({ commit }) {
+            localStorage.removeItem("token");
+            commit("LOGOUT");
         }
+    },
+    getters: {
+        isAuthenticated: state => !!state.token,
+        authStatus: state => state.status,
     }
 })
