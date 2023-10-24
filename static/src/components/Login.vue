@@ -34,7 +34,7 @@ export default {
     ...mapGetters(["isAuthenticated"]),
   },
   methods: {
-    ...mapActions(["addAlert", "login"]),
+    ...mapActions(["addAlert", "login", "setUser"]),
     loginAlert() {
       this.addAlert({
         message: "You have been logged in!",
@@ -56,7 +56,13 @@ export default {
 
         if (response.data.success) {
           // Save token to Vuex store
+          //console.log(response.data.token);
           await this.login(response.data.token);
+
+          this.setUser({
+            userId: response.data.id,
+            username: response.data.username
+          })
 
           // Login alert
           this.loginAlert();

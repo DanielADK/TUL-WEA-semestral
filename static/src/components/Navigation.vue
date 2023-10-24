@@ -10,6 +10,7 @@
           <router-link class="nav-item nav-link" to="/">Home</router-link>
         </ul>
         <div>
+          <a class="nav-item text-white">{{ username }}</a>
           <router-link v-if="!isAuthenticated" to="/login" class="btn btn-light nav-item">Login</router-link>
           <button v-else @click="handleLogout" class="btn btn-danger nav-item">Logout</button>
         </div>
@@ -19,16 +20,17 @@
 </template>
 
 <script lang="ts">
-import {mapActions, mapGetters} from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   computed: {
-    ...mapGetters(["isAuthenticated"])
+    ...mapGetters(["isAuthenticated", "userId", "username"])
   },
   methods: {
-    ...mapActions(["addAlert", "logout"]),
+    ...mapActions(["addAlert", "logout", "clearUser"]),
     async handleLogout() {
       await this.logout();
+      await this.clearUser();
       await this.addAlert({
         message: "You successfully logout.",
         type: "success"
