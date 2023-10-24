@@ -7,12 +7,13 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <ul class="navbar-nav me-auto">
-          <router-link class="nav-item nav-link" to="/">Home</router-link>
+          <router-link v-if="isAuthenticated" class="nav-item nav-link" to="/dashboard">Dashboard</router-link>
+          <router-link v-else class="nav-item nav-link" to="/">Home</router-link>
         </ul>
-        <div>
-          <a class="nav-item text-white">{{ user.username }}</a>
-          <router-link v-if="!isAuthenticated" to="/login" class="btn btn-light nav-item">Login</router-link>
-          <button v-else @click="handleLogout" class="btn btn-danger nav-item">Logout</button>
+        <router-link v-if="!isAuthenticated" to="/login" class="btn btn-light nav-item">Login</router-link>
+        <div v-else class="btn-group">
+          <a class="btn btn-primary active" href="#">{{ user.username }}</a>
+          <button @click="handleLogout" class="btn btn-danger nav-item">Logout</button>
         </div>
       </div>
     </div>
@@ -21,16 +22,16 @@
 
 <script lang="ts">
 import { mapActions, mapGetters } from "vuex";
+import type {User} from "@/types";
 
 export default {
   computed: {
     ...mapGetters(["isAuthenticated", "user"])
   },
   methods: {
-    ...mapActions(["addAlert", "logout", "clearUser"]),
+    ...mapActions(["addAlert", "logout"]),
     async handleLogout() {
       await this.logout();
-      await this.clearUser();
       await this.addAlert({
         message: "You successfully logout.",
         type: "success"

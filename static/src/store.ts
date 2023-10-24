@@ -1,8 +1,9 @@
 import { createStore } from "vuex";
 import type { Store, Commit } from "vuex";
 import type { Alert, State, User } from "./types";
+import createPersistedState from "vuex-persistedstate";
 
-export default createStore<State>({
+const store = createStore<State>({
     state: {
         alerts: [],
         status: null,
@@ -20,9 +21,7 @@ export default createStore<State>({
             state.user = user;
         },
         LOGOUT(state: State) {
-            localStorage.removeItem("status");
             state.status = null;
-            localStorage.removeItem("user");
             state.user = null;
         },
     },
@@ -31,12 +30,9 @@ export default createStore<State>({
             commit("ADD_ALERT", alert);
         },
         login({ commit }: {commit: Commit }, user: User) {
-            console.log(user);
-            localStorage.setItem("user", JSON.stringify(user));
             commit("LOGIN", user);
         },
         logout({ commit }: {commit: Commit }) {
-            localStorage.removeItem("user");
             commit("LOGOUT");
         },
     },
@@ -44,5 +40,10 @@ export default createStore<State>({
         isAuthenticated: state => !!state.user,
         authStatus: state => state.status,
         user: state => state.user,
-    }
-})
+    },
+    plugins: [createPersistedState({
+        paths: ["user", "status"], // Filter of states to persist
+    })]
+});
+
+export default store;

@@ -57,7 +57,6 @@ export default {
 
         if (response.data.success) {
           // Save token to Vuex store
-          console.log("response.data");
           const userData: User = {
             id: response.data.userId,
             username: response.data.username,

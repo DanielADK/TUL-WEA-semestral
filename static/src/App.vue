@@ -7,10 +7,12 @@
   </main>
 </template>
 
-<script setup>
+<script lang="ts">
 import Navigation from "@/components/Navigation.vue";
 import AlertList from "@/components/AlertList.vue";
-
+export default {
+  components: {Navigation}
+}
 </script>
 
 <style scoped>
