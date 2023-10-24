@@ -1,17 +1,18 @@
 <template>
   <Navigation/>
   <main class="container">
-    <AlertList :alerts="alerts" @remove-alert="removeAlert"/>
+    <AlertList/>
 
     <router-view/>
   </main>
 </template>
 
 <script lang="ts">
+import { mapState } from "vuex";
 import Navigation from "@/components/Navigation.vue";
 import AlertList from "@/components/AlertList.vue";
 export default {
-  components: {Navigation}
+  components: {AlertList, Navigation},
 }
 </script>
 

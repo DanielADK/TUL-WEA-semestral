@@ -22,7 +22,6 @@
 
 <script lang="ts">
 import { mapActions, mapGetters } from "vuex";
-import type {User} from "@/types";
 
 export default {
   computed: {
