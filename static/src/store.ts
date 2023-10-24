@@ -30,9 +30,9 @@ export default createStore<State>({
         addAlert({ commit }: {commit: Commit }, alert: Alert) {
             commit("ADD_ALERT", alert);
         },
-        login({ commit }: {commit: Commit }, user) {
+        login({ commit }: {commit: Commit }, user: User) {
             console.log(user);
-            localStorage.setItem("user", user);
+            localStorage.setItem("user", JSON.stringify(user));
             commit("LOGIN", user);
         },
         logout({ commit }: {commit: Commit }) {
@@ -43,5 +43,6 @@ export default createStore<State>({
     getters: {
         isAuthenticated: state => !!state.user,
         authStatus: state => state.status,
+        user: state => state.user,
     }
 })

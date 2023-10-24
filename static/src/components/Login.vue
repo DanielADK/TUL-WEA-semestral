@@ -22,6 +22,7 @@
 <script lang="ts">
 import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
+import type { User } from "@/types";
 
 export default {
   data() {
@@ -41,7 +42,7 @@ export default {
         type: "success"
       })
     },
-    errorAlert(message) {
+    errorAlert(message: string) {
       this.addAlert({
         message: message,
         type: "danger"
@@ -56,13 +57,13 @@ export default {
 
         if (response.data.success) {
           // Save token to Vuex store
-          //console.log(response.data.token);
-          await this.login(response.data.token);
-
-          this.setUser({
-            userId: response.data.id,
-            username: response.data.username
-          })
+          console.log("response.data");
+          const userData: User = {
+            id: response.data.userId,
+            username: response.data.username,
+            token: response.data.token
+          };
+          await this.login(userData);
 
           // Login alert
           this.loginAlert();
