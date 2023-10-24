@@ -79,7 +79,7 @@ def get_tasks():
     return jsonify([
         {"id": task.id,
          "description": task.description,
-         "completed": task.completed
+         "completed": task.completed,
          } for task in tasks])
 
 
