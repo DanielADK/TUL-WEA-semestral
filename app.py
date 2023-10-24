@@ -42,6 +42,14 @@ def generate_token(user_id: int):
     return jwt.encode(payload, app.config["SECRET_KEY"], algorithm="HS256")
 
 
+def verify_token(token):
+    try:
+        data = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
+        return User.query.filter_by(id=data["user_id"]).first()
+    except:
+        return None
+
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), unique=True)
@@ -51,7 +59,7 @@ class User(db.Model):
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     description = db.Column(db.String(255))
     completed = db.Column(db.Boolean)
 
@@ -59,7 +67,7 @@ class Task(db.Model):
 
 
 @app.route("/login", methods=["POST"])
-@cross_origin(origins="http://localhost:5173")
+@cross_origin(origins="http://192.168.0.64:5173")
 def login():
     data = request.get_json()
     username = data.get("username")
@@ -67,14 +75,22 @@ def login():
 
     user = User.query.filter_by(username=username).first()
     if user and check_password_hash(user.password, password, user.salt):
-        return jsonify({"success": True, "token": generate_token(user.id)}), 200
+        return jsonify({
+            "success": True,
+            "token": generate_token(user.id),
+            "username": user.username,
+            "userId": user.id
+        }), 200
     return jsonify({"success": False, "message": "Invalid credentials"}), 401
 
 
 @app.route("/tasks", methods=["GET"])
-@auth.login_required
 def get_tasks():
-    user: any = auth.current_user()
+    token = request.headers.get("Authorization")
+    user = verify_token(token)
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+
     tasks: list = Task.query.filter_by(user_id=user.id).all()
     return jsonify([
         {"id": task.id,
@@ -84,10 +100,13 @@ def get_tasks():
 
 
 @app.route("/tasks", methods=["POST"])
-@auth.login_required
 def create_task():
-    user: any = auth.current_user()
-    data: any = request.get_json()
+    token = request.headers.get("Authorization")
+    user = verify_token(token)
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.get_json()
     new_task = Task(description=data["description"], completed=False, user_id=user.id)
     db.session.add(new_task)
     db.session.commit()
@@ -99,9 +118,12 @@ def create_task():
 
 
 @app.route("/tasks/<int:task_id>", methods=["PUT"])
-@auth.login_required
 def update_task(task_id):
-    user = auth.current_user()
+    token = request.headers.get("Authorization")
+    user = verify_token(token)
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+
     task = Task.query.filter_by(id=task_id, user_id=user.id).first()
     if task is None:
         return jsonify({"error": "Task not found"}), 404
@@ -115,11 +137,13 @@ def update_task(task_id):
         "completed": task.completed
     })
 
-
 @app.route("/tasks/<int:task_id>", methods=["DELETE"])
-@auth.login_required
 def delete_task(task_id):
-    user = auth.current_user()
+    token = request.headers.get("Authorization")
+    user = verify_token(token)
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+
     task = Task.query.filter_by(id=task_id, user_id=user.id).first()
     if task is None:
         return jsonify({"error": "Task not found"}), 404
@@ -129,5 +153,5 @@ def delete_task(task_id):
 
 
 if __name__ == "__main__":
-    db.create_all()
-    app.run(debug=True, port=5000)
+    #db.create_all()
+    app.run(debug=False, host="0.0.0.0", port=5000)
