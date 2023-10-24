@@ -1,19 +1,19 @@
 <template>
   <Navigation/>
   <main class="container">
-    <AlertList :alerts="alerts" @remove-alert="removeAlert"/>
+    <AlertList/>
 
     <router-view/>
   </main>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue'
-import HelloWorld from './components/Home.vue'
-import LoginScreen from "@/components/Login.vue"
+<script lang="ts">
+import { mapState } from "vuex";
 import Navigation from "@/components/Navigation.vue";
 import AlertList from "@/components/AlertList.vue";
-
+export default {
+  components: {AlertList, Navigation},
+}
 </script>
 
 <style scoped>

@@ -1,17 +1,19 @@
 <template>
   <nav class="navbar bg-primary navbar-expand-lg mb-4" data-bs-theme="dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#"><i class="bi bi-journal-text"></i> TODO LIST</a>
+      <a class="navbar-brand" href="/"><i class="bi bi-journal-text"></i> TODO LIST</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <ul class="navbar-nav me-auto">
-          <router-link class="nav-item nav-link" to="/">Home</router-link>
+          <router-link v-if="isAuthenticated" class="nav-item nav-link" to="/dashboard">Dashboard</router-link>
+          <router-link v-else class="nav-item nav-link" to="/">Home</router-link>
         </ul>
-        <div>
-          <router-link v-if="!isAuthenticated" to="/login" class="btn btn-light nav-item">Login</router-link>
-          <button v-else @click="handleLogout" class="btn btn-danger nav-item">Logout</button>
+        <router-link v-if="!isAuthenticated" to="/login" class="btn btn-light nav-item">Login</router-link>
+        <div v-else class="btn-group">
+          <a class="btn btn-primary active" href="#">{{ user.username }}</a>
+          <button @click="handleLogout" class="btn btn-danger nav-item">Logout</button>
         </div>
       </div>
     </div>
@@ -19,11 +21,11 @@
 </template>
 
 <script lang="ts">
-import {mapActions, mapGetters} from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   computed: {
-    ...mapGetters(["isAuthenticated"])
+    ...mapGetters(["isAuthenticated", "user"])
   },
   methods: {
     ...mapActions(["addAlert", "logout"]),

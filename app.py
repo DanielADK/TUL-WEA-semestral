@@ -12,7 +12,7 @@ CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_EXPIRATION_DELTA"] = datetime.timedelta(days=1)
-app.config["SECRET_KEY"] = "jSoB4HgH8ujP6XrxFOFaN45hTK6u4NSz"
+app.config["SECRET_KEY"] = "YOUR_KEY_HERE"
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
 
@@ -79,7 +79,7 @@ def get_tasks():
     return jsonify([
         {"id": task.id,
          "description": task.description,
-         "completed": task.completed
+         "completed": task.completed,
          } for task in tasks])
 
 
