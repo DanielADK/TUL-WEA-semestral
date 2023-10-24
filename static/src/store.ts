@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
-import { Alert, State, User } from "./types";
+import type { Store, Commit } from "vuex";
+import type { Alert, State, User } from "./types";
 
 export default createStore<State>({
     state: {
@@ -18,7 +19,7 @@ export default createStore<State>({
             state.status = "success";
             state.user = user;
         },
-        LOGOUT(state) {
+        LOGOUT(state: State) {
             localStorage.removeItem("status");
             state.status = null;
             localStorage.removeItem("user");
@@ -26,15 +27,15 @@ export default createStore<State>({
         },
     },
     actions: {
-        addAlert({ commit }, alert) {
+        addAlert({ commit }: {commit: Commit }, alert: Alert) {
             commit("ADD_ALERT", alert);
         },
-        login({ commit }, user) {
+        login({ commit }: {commit: Commit }, user) {
             console.log(user);
             localStorage.setItem("user", user);
             commit("LOGIN", user);
         },
-        logout({ commit }) {
+        logout({ commit }: {commit: Commit }) {
             localStorage.removeItem("user");
             commit("LOGOUT");
         },
