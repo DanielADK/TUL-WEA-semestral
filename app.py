@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from flask_cors import CORS, cross_origin
+from functools import wraps
 import datetime
 import hashlib
 import jwt
@@ -15,6 +16,21 @@ app.config["JWT_EXPIRATION_DELTA"] = datetime.timedelta(days=1)
 app.config["SECRET_KEY"] = "YOUR_KEY_HERE"
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(255), unique=True)
+    password = db.Column(db.String(255))
+    salt = db.Column(db.String(255))
+
+
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    description = db.Column(db.String(255))
+    completed = db.Column(db.Boolean)
+
+    user = db.relationship("User", backref=db.backref("tasks", lazy=True))
 
 
 def generate_password_hash(password, salt):
@@ -49,25 +65,29 @@ def verify_token(token):
     except:
         return None
 
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), unique=True)
-    password = db.Column(db.String(255))
-    salt = db.Column(db.String(255))
+        if "Authorization" in request.headers:
+            token = request.headers["Authorization"]
 
+        if not token:
+            return jsonify({"error": "Token is missing"}), 401
 
-class Task(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    description = db.Column(db.String(255))
-    completed = db.Column(db.Boolean)
+        try:
+            data = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
+            current_user = User.query.filter_by(id=data["user_id"]).first()
+        except:
+            return jsonify({"error": "Token is invalid"}), 401
 
-    user = db.relationship("User", backref=db.backref("tasks", lazy=True))
+        return f(current_user, *args, **kwargs)
+    return decorated
 
 
 @app.route("/login", methods=["POST"])
-@cross_origin(origins="http://192.168.0.64:5173")
+@cross_origin(origins="http://localhost:5173")
 def login():
     data = request.get_json()
     username = data.get("username")
@@ -85,12 +105,8 @@ def login():
 
 
 @app.route("/tasks", methods=["GET"])
-def get_tasks():
-    token = request.headers.get("Authorization")
-    user = verify_token(token)
-    if not user:
-        return jsonify({"error": "Unauthorized"}), 401
-
+@token_required
+def get_tasks(user):
     tasks: list = Task.query.filter_by(user_id=user.id).all()
     return jsonify([
         {"id": task.id,
@@ -100,12 +116,8 @@ def get_tasks():
 
 
 @app.route("/tasks", methods=["POST"])
-def create_task():
-    token = request.headers.get("Authorization")
-    user = verify_token(token)
-    if not user:
-        return jsonify({"error": "Unauthorized"}), 401
-
+@token_required
+def create_task(user):
     data = request.get_json()
     new_task = Task(description=data["description"], completed=False, user_id=user.id)
     db.session.add(new_task)
@@ -118,12 +130,8 @@ def create_task():
 
 
 @app.route("/tasks/<int:task_id>", methods=["PUT"])
-def update_task(task_id):
-    token = request.headers.get("Authorization")
-    user = verify_token(token)
-    if not user:
-        return jsonify({"error": "Unauthorized"}), 401
-
+@token_required
+def update_task(user, task_id):
     task = Task.query.filter_by(id=task_id, user_id=user.id).first()
     if task is None:
         return jsonify({"error": "Task not found"}), 404
@@ -138,12 +146,8 @@ def update_task(task_id):
     })
 
 @app.route("/tasks/<int:task_id>", methods=["DELETE"])
-def delete_task(task_id):
-    token = request.headers.get("Authorization")
-    user = verify_token(token)
-    if not user:
-        return jsonify({"error": "Unauthorized"}), 401
-
+@token_required
+def delete_task(user, task_id):
     task = Task.query.filter_by(id=task_id, user_id=user.id).first()
     if task is None:
         return jsonify({"error": "Task not found"}), 404
