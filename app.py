@@ -3,8 +3,10 @@ from functools import wraps
 import datetime
 import hashlib
 import os
+from typing import Tuple
+
 import jwt
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, make_response, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from flask_cors import CORS, cross_origin
@@ -39,6 +41,13 @@ class Task(db.Model):
     completed = db.Column(db.Boolean)
 
     user = db.relationship("User", backref=db.backref("tasks", lazy=True))
+
+    def to_export_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "description": self.description,
+            "completed": self.completed,
+        }
 
 
 def generate_password_hash(password, salt):
@@ -108,6 +117,7 @@ def token_required(f):
     :param f:
     :return:
     """
+
     @wraps(f)
     def decorated(*args, **kwargs):
         """
@@ -230,6 +240,38 @@ def delete_task(user, task_id) -> Response | tuple[Response, int]:
     db.session.delete(task)
     db.session.commit()
     return jsonify({"result": "Task deleted"})
+
+
+@app.route('/export/<string:export_format>', methods=['GET'])
+def export(export_format: str) -> tuple[Response, int] | Response | str:
+    """
+    Export tasks to JSON or HTML
+    :param export_format:
+    :return:
+    """
+    token = request.args.get('token')
+
+    # Verify token
+    try:
+        decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        user_id = decoded['user_id']
+    except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+        return jsonify({"error": "Invalid token"}), 401
+
+    # Load tasks from DB
+    tasks: list = Task.query.filter_by(user_id=user_id).all()
+
+    if export_format == 'json':
+        # Generate JSON
+        response = make_response(jsonify([task.to_export_dict() for task in tasks]))
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    elif export_format == 'html':
+        # Generate HTML
+        return render_template('tasks.html', tasks=tasks)
+    else:
+        # Unsupported format
+        return jsonify({"error": "Unsupported format"}), 400
 
 
 if __name__ == "__main__":
