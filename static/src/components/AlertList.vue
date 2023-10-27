@@ -27,7 +27,4 @@ export default {
 </script>
 
 <style scoped>
-.alert {
-  z-index: 10;
-}
 </style>
