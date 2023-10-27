@@ -17,6 +17,7 @@ app.config["SECRET_KEY"] = "YOUR_KEY_HERE"
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), unique=True)
@@ -65,13 +66,14 @@ def verify_token(token):
     except:
         return None
 
+
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
 
         if "Authorization" in request.headers:
-            token = request.headers["Authorization"]
+            token = request.headers['Authorization'].replace("Bearer ", "")
 
         if not token:
             return jsonify({"error": "Token is missing"}), 401
@@ -83,6 +85,7 @@ def token_required(f):
             return jsonify({"error": "Token is invalid"}), 401
 
         return f(current_user, *args, **kwargs)
+
     return decorated
 
 
@@ -145,6 +148,7 @@ def update_task(user, task_id):
         "completed": task.completed
     })
 
+
 @app.route("/tasks/<int:task_id>", methods=["DELETE"])
 @token_required
 def delete_task(user, task_id):
@@ -157,5 +161,5 @@ def delete_task(user, task_id):
 
 
 if __name__ == "__main__":
-    #db.create_all()
+    # db.create_all()
     app.run(debug=False, host="0.0.0.0", port=5000)
