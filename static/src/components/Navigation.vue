@@ -7,7 +7,7 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <ul class="navbar-nav me-auto">
-          <router-link v-if="isAuthenticated" class="nav-item nav-link" to="/dashboard">Dashboard</router-link>
+          <router-link v-if="isAuthenticated" class="nav-item nav-link" to="/">Dashboard</router-link>
           <router-link v-else class="nav-item nav-link" to="/">Home</router-link>
         </ul>
         <router-link v-if="!isAuthenticated" to="/login" class="btn btn-light nav-item">Login</router-link>
