@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { mapGetters, useStore } from 'vuex';
+import {mapActions, mapGetters, useStore} from 'vuex';
 import { addTask } from '@/api';
 
 export default {
@@ -25,10 +25,10 @@ export default {
     ...mapGetters(['user'])
   },
   methods: {
+    ...mapActions(["createTask"]),
     async handleSubmit() {
       try {
-        const token = this.user.token;
-        const response = await addTask(token, this.description);
+        await this.createTask(this.description);
         this.description = "";
       } catch (error) {
         console.error(error);
