@@ -1,9 +1,8 @@
 <template>
-  <div class="row">
+  <div class="row list-group">
     <h1 class="text-center mb-4">Tasks</h1>
-    <div class="col-12" v-for="task in sortedTasks" :key="task.id">
-      <div class="d-flex justify-content-between align-items-center border-bottom py-2 mx-2 bg-opacity-50"
-          :class="{ 'bg-success': task.completed }">
+    <div class="list-group-item" :class="{ 'list-group-item-success': task.completed }" v-for="task in sortedTasks" :key="task.id">
+      <div class="d-flex justify-content-between align-items-center py-2 mx-2">
         <input type="text" class="form-control mx-2" v-model="task.description" @blur="updateTask(task)" />
 
         <div class="btn-group mx-2">
