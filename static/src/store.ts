@@ -115,11 +115,15 @@ const store = createStore<State>({
          */
         async fetchTasks({ commit, state, dispatch }) {
             if (state.user) {
-                const response = await api.getTasks(state.user.token);
-                if (response.status == 200 || response.status == 201) {
-                    commit("SET_TASKS", response.data);
-                } else {
-                    dispatch("addAlert", { type: "error", message: "Failed to fetch tasks." });
+                try {
+                    const response = await api.getTasks(state.user.token);
+                    if (response.status == 200 || response.status == 201) {
+                        commit("SET_TASKS", response.data);
+                    } else {
+                        dispatch("addAlert", { type: "error", message: "Failed to fetch tasks." });
+                    }
+                } catch (error) {
+                    await dispatch("addAlert", {type: "danger", message: "Failed to fetch task."});
                 }
             }
         },
@@ -132,12 +136,16 @@ const store = createStore<State>({
          */
         async createTask({ commit, state, dispatch }, description) {
             if (state.user) {
-                console.log(description)
-                const response = await api.addTask(state.user.token, description);
-                if (response.status == 200 || response.status == 201) {
-                    commit("ADD_TASK", response.data);
-                } else {
-                    dispatch("addAlert", { type: "danger", message: "Failed to create task." });
+                try {
+                    console.log(description)
+                    const response = await api.addTask(state.user.token, description);
+                    if (response.status == 200 || response.status == 201) {
+                        commit("ADD_TASK", response.data);
+                    } else {
+                        dispatch("addAlert", { type: "danger", message: "Failed to create task." });
+                    }
+                } catch (error) {
+                    await dispatch("addAlert", {type: "danger", message: "Failed to create task."});
                 }
             }
         },
@@ -151,12 +159,17 @@ const store = createStore<State>({
          */
         async modifyTask({ commit, state, dispatch }, { id, data }) {
             if (state.user) {
-                const response = await api.updateTask(state.user.token, id, data);
-                if (response.status == 200 || response.status == 201) {
-                    commit("UPDATE_TASK", response.data);
-                } else {
+                try {
+                    const response = await api.updateTask(state.user.token, id, data);
+                    if (response.status == 200 || response.status == 201) {
+                        commit("UPDATE_TASK", response.data);
+                    } else {
+                        await dispatch("addAlert", {type: "danger", message: "Failed to modify task."});
+                    }
+                } catch (error) {
                     await dispatch("addAlert", {type: "danger", message: "Failed to modify task."});
                 }
+
             }
         },
         /**
@@ -168,11 +181,15 @@ const store = createStore<State>({
          */
         async removeTask({ commit, state, dispatch }, id) {
             if (state.user) {
-                const response = await api.deleteTask(state.user.token, id);
-                if (response.status == 200 || response.status == 201) {
-                    commit("DELETE_TASK", id);
-                } else {
-                    await dispatch("addAlert", { type: "danger", message: "Failed to delete task." });
+                try {
+                    const response = await api.deleteTask(state.user.token, id);
+                    if (response.status == 200 || response.status == 201) {
+                        commit("DELETE_TASK", id);
+                    } else {
+                        await dispatch("addAlert", { type: "danger", message: "Failed to delete task." });
+                    }
+                } catch (error) {
+                    await dispatch("addAlert", {type: "danger", message: "Failed to delete task."});
                 }
             }
         }
