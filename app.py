@@ -1,17 +1,14 @@
+""" Flask API for the task manager app """
+from functools import wraps
+import datetime
+import hashlib
+import os
+import jwt
 from flask import Flask, request, jsonify, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from flask_cors import CORS, cross_origin
-from functools import wraps
-import datetime
-import hashlib
-import jwt
-import os
 
-"""
-This is a simple Flask API that allows users to create, update, delete and list tasks.
-The API uses JWT for authentication and SQLite for data storage.
-"""
 app = Flask(__name__)
 CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
@@ -101,7 +98,7 @@ def verify_token(token):
     try:
         data = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
         return User.query.filter_by(id=data["user_id"]).first()
-    except:
+    except jwt.ExpiredSignatureError:
         return None
 
 
@@ -130,7 +127,7 @@ def token_required(f):
         try:
             data = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
             current_user = User.query.filter_by(id=data["user_id"]).first()
-        except:
+        except jwt.ExpiredSignatureError:
             return jsonify({"error": "Token is invalid"}), 401
 
         return f(current_user, *args, **kwargs)
