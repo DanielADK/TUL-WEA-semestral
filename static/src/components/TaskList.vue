@@ -4,11 +4,19 @@
     <h1 class="text-center mb-4">Tasks</h1>
 
     <!-- TaskListFilter -->
-    <div class="row">
-      <div class="col-4 input-group text-center mb-4">
-        <button class="btn btn-outline-primary" :class="{'active': currentFilter == 'all'}" @click="setFilter('all')">All</button>
-        <button class="btn btn-outline-primary" :class="{'active': currentFilter == 'completed'}" @click="setFilter('completed')">Completed</button>
-        <button class="btn btn-outline-primary" :class="{'active': currentFilter == 'uncompleted'}" @click="setFilter('uncompleted')">Uncompleted</button>
+    <div class="row mb-4">
+      <div class="col">
+        <div class="input-group text-center">
+          <button class="btn btn-outline-primary" :class="{'active': currentFilter == 'all'}" @click="setFilter('all')">All</button>
+          <button class="btn btn-outline-primary" :class="{'active': currentFilter == 'completed'}" @click="setFilter('completed')">Completed</button>
+          <button class="btn btn-outline-primary" :class="{'active': currentFilter == 'uncompleted'}" @click="setFilter('uncompleted')">Uncompleted</button>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="input-group text-center">
+          <a class="btn btn-outline-secondary" :href="exportLink('html')">HTML</a>
+          <a class="btn btn-outline-secondary" :href="exportLink('json')">JSON</a>
+        </div>
       </div>
     </div>
 
@@ -40,7 +48,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(["tasks"]),
+    ...mapState(["tasks", "user"]),
     sortedTasks() {
       return this.tasks.sort((a: Task, b: Task) => {
         return (a.completed ? 1 : 0) - (b.completed ? 1 : 0) || a.id - b.id;
@@ -57,6 +65,9 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(["fetchTasks", "createTask", "modifyTask", "removeTask"]),
+    exportLink(format: string) {
+      return `http://localhost:5000/export/${format}?token=${this.user.token}`;
+    },
     setFilter(filter: string) {
       this.currentFilter = filter;
     },
