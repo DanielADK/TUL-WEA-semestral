@@ -2,11 +2,10 @@
   <div class="row">
     <h1 class="text-center">Add Task</h1>
     <form @submit.prevent="handleSubmit">
-      <div class="mb-3">
-        <label for="taskDescription" class="form-label">Task Description</label>
-        <input type="text" class="form-control" id="taskDescription" v-model="description" required>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" id="taskDescription" placeholder="Task description" v-model="description" required>
+        <button type="submit" class="btn btn-primary">Add Task</button>
       </div>
-      <button type="submit" class="btn btn-primary">Add Task</button>
     </form>
   </div>
 </template>
