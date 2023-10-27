@@ -1,7 +1,7 @@
 <template>
   <!-- Navigation -->
   <Navigation/>
-  <main class="container row">
+  <main class="container-fluid row">
     <AlertList/>
 
     <router-view/>
