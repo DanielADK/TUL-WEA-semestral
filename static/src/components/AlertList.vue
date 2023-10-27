@@ -1,9 +1,11 @@
 <template>
-  <div class="col-12">
-    <div v-for="(alert, index) in alerts" :key="index" class="alert" :class="alertClass(alert.type)">
+  <!-- AlertList -->
+  <section class="col-12">
+    <div v-for="(alert, index) in alerts" :key="index" class="alert alert-dismissible fade show" :class="alertClass(alert.type)">
       {{ alert.message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -25,5 +27,7 @@ export default {
 </script>
 
 <style scoped>
-
+.alert {
+  z-index: 10;
+}
 </style>

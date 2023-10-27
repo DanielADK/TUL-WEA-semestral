@@ -1,6 +1,7 @@
 <template>
+  <!-- Navigation -->
   <Navigation/>
-  <main class="container">
+  <main class="container row">
     <AlertList/>
 
     <router-view/>
@@ -8,17 +9,20 @@
 </template>
 
 <script lang="ts">
-import { mapState } from "vuex";
 import Navigation from "@/components/Navigation.vue";
 import AlertList from "@/components/AlertList.vue";
-import {onMounted} from "vue";
 import store from "@/store";
 import router from "@/router";
+
 export default {
   components: {AlertList, Navigation},
   mounted() {
     const token = store.state.user?.token; // předpokládáme, že token je uložen ve Vuex state pod objektem 'user'
 
+    /**
+     * Function to check if token is expired
+     * @param token
+     */
     function isTokenExpired(token: string) {
       try {
         const base64Url = token.split('.')[1];
@@ -40,6 +44,7 @@ export default {
       }
     }
 
+    // If token is expired, logout user
     if (token && isTokenExpired(token)) {
       console.log("Token has expired, need to refresh or logout");
       store.dispatch("logout");

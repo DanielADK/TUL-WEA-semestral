@@ -137,7 +137,7 @@ const store = createStore<State>({
                 if (response.status == 200 || response.status == 201) {
                     commit("ADD_TASK", response.data);
                 } else {
-                    dispatch("addAlert", { type: "error", message: "Failed to create task." });
+                    dispatch("addAlert", { type: "danger", message: "Failed to create task." });
                 }
             }
         },
@@ -155,7 +155,7 @@ const store = createStore<State>({
                 if (response.status == 200 || response.status == 201) {
                     commit("UPDATE_TASK", response.data);
                 } else {
-                    dispatch("addAlert", { type: "error", message: "Failed to modify task." });
+                    await dispatch("addAlert", {type: "danger", message: "Failed to modify task."});
                 }
             }
         },
@@ -172,7 +172,7 @@ const store = createStore<State>({
                 if (response.status == 200 || response.status == 201) {
                     commit("DELETE_TASK", id);
                 } else {
-                    dispatch("addAlert", { type: "error", message: "Failed to delete task." });
+                    await dispatch("addAlert", { type: "danger", message: "Failed to delete task." });
                 }
             }
         }

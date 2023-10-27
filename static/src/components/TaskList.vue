@@ -1,7 +1,8 @@
 <template>
-  <div class="row list-group">
+  <!-- TaskList -->
+  <div class="list-group">
     <h1 class="text-center mb-4">Tasks</h1>
-    <div class="list-group-item" :class="{ 'list-group-item-success': task.completed }" v-for="task in sortedTasks" :key="task.id">
+    <div class="list-group-item list-group-item-action" :class="{ 'list-group-item-success': task.completed }" v-for="task in sortedTasks" :key="task.id">
       <div class="d-flex justify-content-between align-items-center py-2 mx-2">
         <input type="text" class="form-control mx-2" v-model="task.description" @blur="updateTask(task)" />
 

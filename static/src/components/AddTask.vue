@@ -1,13 +1,14 @@
 <template>
-  <div class="row">
-    <h1 class="text-center">Add Task</h1>
+  <!-- AddTask -->
+  <section>
+    <h1 class="text-center mb-4">Add Task</h1>
     <form @submit.prevent="handleSubmit">
       <div class="input-group mb-3">
         <input type="text" class="form-control" id="taskDescription" placeholder="Task description" v-model="description" required>
         <button type="submit" class="btn btn-primary">Add Task</button>
       </div>
     </form>
-  </div>
+  </section>
 </template>
 
 <script lang="ts">

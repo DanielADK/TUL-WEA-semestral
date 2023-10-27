@@ -1,6 +1,7 @@
 <template>
-  <AddTask />
-  <TaskList/>
+  <!-- Dashboard -->
+  <AddTask class="col-4"/>
+  <TaskList class="col-8"/>
 </template>
 
 <script lang="ts" setup>
