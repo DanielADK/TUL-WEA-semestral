@@ -12,10 +12,16 @@ from flask_httpauth import HTTPBasicAuth
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={
+    r"*": {
+       "origins": ["https://todo.danieladamek.eu", "http://localhost:5173"],
+       "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+       "allow_headers": ["Authorization", "Content-Type"]
+    }
+})
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["JWT_EXPIRATION_DELTA"] = datetime.timedelta(days=1)
+app.config["JWT_EXPIRATION_DELTA"] = datetime.timedelta(hours=8)
 app.config["SECRET_KEY"] = "YOUR_KEY_HERE"
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
@@ -146,7 +152,6 @@ def token_required(f):
 
 
 @app.route("/login", methods=["POST"])
-@cross_origin(origins="http://localhost:5173")
 def login():
     """
     Login endpoint
@@ -169,7 +174,7 @@ def login():
 
 @app.route("/tasks", methods=["GET"])
 @token_required
-def get_tasks(user) -> Response:
+def get_tasks(user):
     """
     Get all tasks
     :param user:
@@ -185,7 +190,7 @@ def get_tasks(user) -> Response:
 
 @app.route("/tasks", methods=["POST"])
 @token_required
-def create_task(user) -> Response:
+def create_task(user):
     """
     Create a new task
     :param user:
@@ -204,7 +209,7 @@ def create_task(user) -> Response:
 
 @app.route("/tasks/<int:task_id>", methods=["PUT"])
 @token_required
-def update_task(user, task_id: int) -> Response | tuple[Response, int]:
+def update_task(user, task_id: int):
     """
     Update a task
     :param user:
@@ -227,7 +232,7 @@ def update_task(user, task_id: int) -> Response | tuple[Response, int]:
 
 @app.route("/tasks/<int:task_id>", methods=["DELETE"])
 @token_required
-def delete_task(user, task_id) -> Response | tuple[Response, int]:
+def delete_task(user, task_id):
     """
     Delete a task
     :param user:
@@ -243,7 +248,7 @@ def delete_task(user, task_id) -> Response | tuple[Response, int]:
 
 
 @app.route('/export/<string:export_format>', methods=['GET'])
-def export(export_format: str) -> tuple[Response, int] | Response | str:
+def export(export_format: str):
     """
     Export tasks to JSON or HTML
     :param export_format:

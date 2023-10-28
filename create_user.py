@@ -1,7 +1,7 @@
 from app import app, db, User, generate_password_hash, generate_salt
 
-USERNAME = "daniel"
-PASSWORD = "adamek"
+USERNAME = "tester"
+PASSWORD = "tester"
 
 with app.app_context():
     db.create_all()

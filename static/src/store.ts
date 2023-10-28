@@ -137,7 +137,6 @@ const store = createStore<State>({
         async createTask({ commit, state, dispatch }, description) {
             if (state.user) {
                 try {
-                    console.log(description)
                     const response = await api.addTask(state.user.token, description);
                     if (response.status == 200 || response.status == 201) {
                         commit("ADD_TASK", response.data);

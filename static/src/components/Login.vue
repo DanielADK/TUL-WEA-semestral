@@ -23,6 +23,7 @@
 import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
 import type { User } from "@/types";
+import {login} from "@/api";
 
 export default {
   data() {
@@ -50,10 +51,7 @@ export default {
     },
     async handleLogin() {
       try {
-        const response = await axios.post("http://localhost:5000/login", {
-          username: this.username,
-          password: this.password
-        });
+        const response = await login(this.username, this.password);
 
         if (response.data.success) {
           // Save token to Vuex store
