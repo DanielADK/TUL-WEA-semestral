@@ -1,10 +1,12 @@
 <template>
   <!-- Navigation -->
   <Navigation/>
-  <main class="container-fluid row">
-    <AlertList/>
+  <main class="container-fluid">
+    <div class="row">
+      <AlertList/>
 
-    <router-view/>
+      <router-view/>
+    </div>
   </main>
 </template>
 
@@ -17,7 +19,7 @@ import router from "@/router";
 export default {
   components: {AlertList, Navigation},
   mounted() {
-    const token = store.state.user?.token; // předpokládáme, že token je uložen ve Vuex state pod objektem 'user'
+    const token = store.state.user?.token;
 
     /**
      * Function to check if token is expired
@@ -45,11 +47,13 @@ export default {
     }
 
     // If token is expired, logout user
-    if (token && isTokenExpired(token)) {
-      console.log("Token has expired, need to refresh or logout");
-      store.dispatch("logout");
-      store.dispatch("addAlert", { message: "Your session expired. Please login again", type: "warning" });
-      router.push("/login");
+    if (token) {
+      if (isTokenExpired(token)) {
+        console.log("Token has expired, need to refresh or logout");
+        store.dispatch("logout");
+        store.dispatch("addAlert", {message: "Your session expired. Please login again", type: "warning"});
+        router.push("/login");
+      }
     }
   },
 }
