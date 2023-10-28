@@ -26,6 +26,9 @@ export default {
   },
   methods: {
     ...mapActions(["createTask"]),
+    /**
+     * Handles the form submission
+     */
     async handleSubmit() {
       try {
         await this.createTask(this.description);

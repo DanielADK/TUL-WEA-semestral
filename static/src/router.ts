@@ -9,6 +9,9 @@ import Home from './components/Home.vue';
 import Dashboard from "./components/Dashboard.vue";
 import store from "./store";
 
+/**
+ * @description: Create the router
+ */
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
@@ -33,6 +36,9 @@ const router = createRouter({
     routes
 })
 
+/**
+ * @description: Check if the route requires authentication
+ */
 router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
     const requiresAuth = to.meta.requiresAuth as boolean;
 

@@ -37,18 +37,28 @@ export default {
   },
   methods: {
     ...mapActions(["addAlert", "login", "setUser"]),
+    /**
+     * Adds a login alert
+     */
     loginAlert() {
       this.addAlert({
         message: "You have been logged in!",
         type: "success"
       })
     },
+    /**
+     * Adds an error alert
+     * @param message The message of the alert
+     */
     errorAlert(message: string) {
       this.addAlert({
         message: message,
         type: "danger"
       })
     },
+    /**
+     * Handles the login
+     */
     async handleLogin() {
       try {
         const response = await login(this.username, this.password);

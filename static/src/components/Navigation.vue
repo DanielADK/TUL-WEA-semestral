@@ -29,6 +29,9 @@ export default {
   },
   methods: {
     ...mapActions(["addAlert", "logout"]),
+    /**
+     * Handles the logout
+     */
     async handleLogout() {
       await this.logout();
       await this.addAlert({

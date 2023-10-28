@@ -3,14 +3,13 @@ from functools import wraps
 import datetime
 import hashlib
 import os
-from typing import Tuple
-
 import jwt
 from flask import Flask, request, jsonify, Response, make_response, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from flask_cors import CORS, cross_origin
 
+# Basic Flask setup
 app = Flask(__name__)
 CORS(app, resources={
     r"*": {
@@ -19,6 +18,7 @@ CORS(app, resources={
        "allow_headers": ["Authorization", "Content-Type"]
     }
 })
+# App configuration
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_EXPIRATION_DELTA"] = datetime.timedelta(hours=8)

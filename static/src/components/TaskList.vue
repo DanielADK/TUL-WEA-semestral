@@ -51,11 +51,17 @@ export default defineComponent({
   },
   computed: {
     ...mapState(["tasks", "user"]),
+    /**
+     * Returns the sorted tasks
+     */
     sortedTasks() {
       return this.tasks.sort((a: Task, b: Task) => {
         return (a.completed ? 1 : 0) - (b.completed ? 1 : 0) || a.id - b.id;
       });
     },
+    /**
+     * Returns the filtered tasks
+     */
     filteredTasks() {
       return this.sortedTasks.filter((task: Task) => {
         if (this.currentFilter == "all") return true;
@@ -67,18 +73,38 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(["fetchTasks", "createTask", "modifyTask", "removeTask"]),
+    /**
+     * Returns the export link
+     * @param format
+     */
     exportLink(format: string) {
       return `https://api-todo.danieladamek.eu/export/${format}?token=${this.user.token}`;
     },
+    /**
+     * Sets the current filter
+     * @param filter The filter
+     */
     setFilter(filter: string) {
       this.currentFilter = filter;
     },
+    /**
+     * Updates the task
+     * @param task The task
+     */
     updateTask(task: Task) {
       this.modifyTask({ id: task.id, data: { description: task.description } });
     },
+    /**
+     * Toggles the completion of the task
+     * @param task The task
+     */
     toggleCompletion(task: Task) {
       this.modifyTask({ id: task.id, data: { completed: !task.completed } });
     },
+    /**
+     * Deletes the task
+     * @param id The id of the task
+     */
     deleteTask(id: number) {
       this.removeTask(id);
     }

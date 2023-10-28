@@ -16,9 +16,17 @@ export default {
     ...mapState(["alerts"])
   },
   methods: {
+    /**
+     * Returns the class for the alert
+     * @param type The type of the alert
+     */
     alertClass(type) {
       return `alert-${type}`;
     },
+    /**
+     * Removes the alert from the store
+     * @param index The index of the alert
+     */
     removeAlert(index) {
       this.$emit("remove-alert", index);
     },
