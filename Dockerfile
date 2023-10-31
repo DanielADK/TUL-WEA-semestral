@@ -21,4 +21,4 @@ ENV FLASK_APP=app.py
 EXPOSE 5000
 
 # Spustíme aplikaci
-CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["gunicorn", "-c", "gunicorn_config.py", "app:app"]
